@@ -1,0 +1,6 @@
+{
+    "require": {
+        "dbout/wp-orm": "^3.3",
+        "fakerphp/faker": "^1.24"
+    }
+}

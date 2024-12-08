@@ -1,0 +1,8 @@
+
+.env
+/wp-content/plugins/gambling-rest-api/vendor/
+/wp-content/themes/
+/wp-content/plugins/jwt-authentication-for-wp-rest-api
+wp-content/debug.log
+wp-content/index.php
+wp-content/plugins/index.php
