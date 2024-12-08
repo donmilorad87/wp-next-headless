@@ -113,7 +113,7 @@ if (!class_exists('Gambling_REST_API')) {
                 ]
             ]);
 
-            register_rest_route('gambling_api/v1', '/user/weather_suggestion/(?P<id>\d+)', [
+            register_rest_route('gambling_api/v1', '/weather_suggestion/(?P<id>\d+)', [
                 'methods' => 'GET',
                 'permission_callback' => [$this, 'logged_content'],
                 'callback' => [$this, 'get_weather_suggestion'],
