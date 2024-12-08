@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "9c3ec7bd-e3ba-411a-95bc-ae1c57bde1fc",
+		"name": "WP Gambling REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10011652",
+		"_collection_link": "https://blazing-sun.postman.co/workspace/Blazing-Sun~489eac99-ff89-40a4-8f44-92419d2be62e/collection/10011652-9c3ec7bd-e3ba-411a-95bc-ae1c57bde1fc?action=share&source=collection_link&creator=10011652"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "wp token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (jsonData.token) {\r",
+									"        pm.collectionVariables.set(\"token\", jsonData.token);\r",
+									"    }\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"milner\",\r\n    \"password\":\"milner\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlJWT}}/token",
+							"host": [
+								"{{baseUrlJWT}}"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify tokein wp",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiaWF0IjoxNzMzNDI5ODg2LCJuYmYiOjE3MzM0Mjk4ODYsImV4cCI6MTczNDAzNDY4NiwiZGF0YSI6eyJ1c2VyIjp7ImlkIjoiMSJ9fX0.2Cj7fyC9RudOsdJ4LanJrzjSFrC-4seuxQvJKP_ORO4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/wp-json/jwt-auth/v1/token/validate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"wp-json",
+								"jwt-auth",
+								"v1",
+								"token",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "set_user_salary_for_mont_and_return_annual_by_full_name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"1987-10-23\",\r\n    \"salary\":11,\r\n    \"user_id\":11\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/set_user_salary_for_mont_and_return_annual_by_full_name",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"set_user_salary_for_mont_and_return_annual_by_full_name"
+							]
+						},
+						"description": "### POST {{baseURL}}/set_user_salary_for_mont_and_return_annual_by_full_name\n\nThis endpoint is used to set the salary for a user for a specific month and return the annual salary by full name.\n\n#### Request\n\n- Method: POST\n    \n- URL: `http://localhost/wp-json/gambling_api/v1/set_user_salary_for_mont_and_return_annual_by_full_name`\n    \n- Headers:\n    \n    - Content-Type: application/json\n        \n- Body:\n    \n    - date (string, required): The date for which the salary is being set (e.g. \"1987-10-23\").\n        \n    - salary (number, required): The amount of the salary.\n        \n    - user_id (number, required): The ID of the user.\n        \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- { \"success\": true, \"data\": { \"success\": true, \"message\": \"\", \"code\": 0 }}\n    \n\n#### Response Schema\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"success\": {\n          \"type\": \"boolean\"\n        },\n        \"message\": {\n          \"type\": \"string\"\n        },\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "weather_suggestion for user id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/weather_suggestion/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"weather_suggestion",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/get_users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"get_users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost/wp-json/gambling_api/v1",
+			"type": "string"
+		},
+		{
+			"key": "baseUrlJWT",
+			"value": "http://localhost/wp-json/jwt-auth/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

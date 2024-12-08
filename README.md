@@ -38,6 +38,8 @@ composer install
 
 When you install composer dependencies then activate the plugin. Plugin activation will create several database tables. When the plugin is activated go to plugin and click seed. The seed will input demo data into the database so API can be consumed from the Next.js side.
 
+Postman collection link for API routes used inside of Next.js https://blazing-sun.postman.co/workspace/Blazing-Sun~489eac99-ff89-40a4-8f44-92419d2be62e/collection/10011652-9c3ec7bd-e3ba-411a-95bc-ae1c57bde1fc?action=share&creator=10011652
+
 After you have account for WP (account do not need to have admin permisions), and have JWT and Gambling rest api pluins you can go to **/gambling-app**
 
 Inside of **/gambling-app** you should first install npm dependencies.
