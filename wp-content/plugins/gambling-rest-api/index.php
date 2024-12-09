@@ -373,96 +373,100 @@ if (!class_exists('Gambling_REST_API')) {
         }
         function get_country_currencies()
         {
-            ini_set('memory_limit', '256M'); // Increase the memory limit to 256MB
+            try {
+                ini_set('memory_limit', '256M'); // Increase the memory limit to 256MB
 
-            $api_url = "https://restcountries.com/v3.1/all";
+                $api_url = "https://restcountries.com/v3.1/all";
 
-            // Initialize cURL session
-            $ch = curl_init($api_url);
+                // Initialize cURL session
+                $ch = curl_init($api_url);
 
-            // Set cURL options
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                // Set cURL options
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-            // Allow for chunked transfer encoding
-            curl_setopt($ch, CURLOPT_ENCODING, "");  // Blank allows automatic detection
+                // Allow for chunked transfer encoding
+                curl_setopt($ch, CURLOPT_ENCODING, "");  // Blank allows automatic detection
 
-            // Execute cURL request
-            $response = curl_exec($ch);
+                // Execute cURL request
+                $response = curl_exec($ch);
 
-            // Check for errors
-            if ($response === false) {
-                die('Error occurred while fetching data: ' . curl_error($ch));
-            }
+                // Check for errors
+                if ($response === false) {
+                    die('Error occurred while fetching data: ' . curl_error($ch));
+                }
 
-            // Close the cURL session
-            curl_close($ch);
+                // Close the cURL session
+                curl_close($ch);
 
-            // Decode the JSON response into a PHP array
-            /*    $countries = json_decode($response, true); */
-            // Convert the response to UTF-8 if necessary
-            $response = mb_convert_encoding($response, 'UTF-8', 'UTF-8');
-            // Decode the JSON response into an array
-            $countries = json_decode($response, true);
+                // Decode the JSON response into a PHP array
+                /*    $countries = json_decode($response, true); */
+                // Convert the response to UTF-8 if necessary
+                $response = mb_convert_encoding($response, 'UTF-8', 'UTF-8');
+                // Decode the JSON response into an array
+                $countries = json_decode($response, true);
 
-            // Initialize an array to store country and currency info
-            $countryies = [];
-            $currencies = [];
-            // Check if the request was successful
-            $faker = Faker\Factory::create();
-            if ($countries) {
-                // Loop through each country and extract currency information
-                foreach ($countries as $index => $country) {
-                    $country_country_common_name_name = $country['name']['common'];  // Country name
-                    $country_official_name = $country['name']['official'];  // Country name
-                    $country_cca2 = $country['cca2'];
-                    $country_cca3 = $country['cca3'];
-                    if (isset($country['currencies']) && !empty($country['currencies'])) {
+                // Initialize an array to store country and currency info
+                $countryies = [];
+                $currencies = [];
+                // Check if the request was successful
+                $faker = Faker\Factory::create();
+                if ($countries) {
+                    // Loop through each country and extract currency information
+                    foreach ($countries as $index => $country) {
+                        $country_country_common_name_name = $country['name']['common'];  // Country name
+                        $country_official_name = $country['name']['official'];  // Country name
+                        $country_cca2 = $country['cca2'];
+                        $country_cca3 = $country['cca3'];
+                        if (isset($country['currencies']) && !empty($country['currencies'])) {
 
-                        $curr = $country['currencies'];
-                    } else {
+                            $curr = $country['currencies'];
+                        } else {
 
-                        $currObj[$faker->currencyCode()] = [
-                            'name' => $faker->currencyCode(),
-                            'symbol' => $this->getRandomCurrencySymbol()
-                        ];
-                        $curr = $currObj;
-                    }
-
-
-                    $countryies[] = [
-                        'id' => $index + 1,
-                        'name' => $country_country_common_name_name,
-                        'official_name' => $country_official_name,
-                        'cca2' => $country_cca2,
-                        'cca3' => $country_cca3
-                    ];
-
-
-                    if ($curr) {
-
-                        // Loop through currencies (as some countries might have multiple currencies)
-                        foreach ($curr as $iso3 => $currency) {
-                            $currencies[] = [
-                                'country_id' => $index + 1,
-                                'iso3' => $iso3,
-                                'name' => $currency['name'],
-                                'symbol' => $currency['symbol'],
-                                'rate_to_eur' => $faker->randomFloat(2, 0, 1000)
+                            $currObj[$faker->currencyCode()] = [
+                                'name' => $faker->currencyCode(),
+                                'symbol' => $this->getRandomCurrencySymbol()
                             ];
+                            $curr = $currObj;
+                        }
+
+
+                        $countryies[] = [
+                            'id' => $index + 1,
+                            'name' => $country_country_common_name_name,
+                            'official_name' => $country_official_name,
+                            'cca2' => $country_cca2,
+                            'cca3' => $country_cca3
+                        ];
+
+
+                        if ($curr) {
+
+                            // Loop through currencies (as some countries might have multiple currencies)
+                            foreach ($curr as $iso3 => $currency) {
+                                $currencies[] = [
+                                    'country_id' => $index + 1,
+                                    'iso3' => $iso3,
+                                    'name' => $currency['name'],
+                                    'symbol' => $currency['symbol'],
+                                    'rate_to_eur' => $faker->randomFloat(2, 0, 1000)
+                                ];
+
+                            }
 
                         }
 
                     }
-
+                } else {
+                    // If the API call fails
+                    return "Failed to fetch country data.";
                 }
-            } else {
-                // If the API call fails
-                return "Failed to fetch country data.";
+
+
+                return ['countries' => $countryies, 'currencies' => $currencies];
+            } catch (\Throwable $th) {
+                throw new Exception("Curl did not managed to execute!");
             }
-
-
-            return ['countries' => $countryies, 'currencies' => $currencies];
         }
 
         // Example of using the function
@@ -519,42 +523,20 @@ if (!class_exists('Gambling_REST_API')) {
             }
 
             try {
-                //if ( false === get_option( 'my_custom_option' ) ) {
-                // Add the option with a value
-                //     add_option( 'my_custom_option', 'This is my custom value' );
-                // }
-                //get_option('ocamba_hood_settings', array())
-                //update_option('ocamba_hood_settings', array_map('sanitize_text_field', $settings));
-                //delete_option('ocamba_hood_settings');
+
                 if (
                     (isset($_POST['seed']) && !empty($_POST['seed']) && ((!isset($_POST['users']) && empty($_POST['users']))))
                 ) {
 
                     $countries_with_currencies = $this->get_country_currencies();
-                    /* var_dump($countries_with_currencies);
-                    die(); */
 
-                    /* $countries_and_currencies = $this->get_country_names_and_official_names(); */
-                    /* var_dump($countries_with_currencies['countries']);
-                    die(); */
 
                     Country::insert($countries_with_currencies['countries']);
                     Currency::insert($countries_with_currencies['currencies']);
                     foreach ($countries_with_currencies['countries'] as $country) {
                         $cities = $this->getRandomCities(nat: $country['cca2'], resultsCount: 5, country_id: $country['id']);
                         City::insert($cities);
-                        /*  foreach ($cities['cities'] as $city) {
-                             $users = [];
-                             $faker = Faker\Factory::create();
 
-                             $users[] = [
-                                 'first_name' => $faker->firstName(),
-                                 'last_name' => $faker->lastName(),
-                                 'address' => $faker->streetAddress(),
-                                 'phone' => $faker->phoneNumber(),
-                                 'email' => $faker->email(),
-                             ];
-                         } */
                     }
 
 
@@ -605,6 +587,7 @@ if (!class_exists('Gambling_REST_API')) {
 
                     Weather::insert($weathers);
                     User::insert($users);
+
                     $this->setOrUpdateOption(option_name: 'gambling_api_seed_finished', option_value: 'true');
 
                     wp_send_json_success(['message' => 'users added to db, weather added to db.']);

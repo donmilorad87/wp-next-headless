@@ -41,7 +41,7 @@ export default class Admin_Gambling_REST_API {
                 console.log(data)
                 loadingDialog.close()
                 //this.submitForm('users')
-
+                location.reload()
             }).catch((error) => {
                 console.error('Error:', error)
             }).finally(() => {
